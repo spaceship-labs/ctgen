@@ -1,0 +1,23 @@
+{
+  "name": "ctgen",
+  "version": "0.0.0",
+  "description": "download and generate db for ctbook",
+  "main": "./lib/main.js",
+  "scripts": {
+    "test": "mocha test/*.js"
+  },
+  "author": "spaceshiplabs.com",
+  "license": "MIT",
+  "devDependencies": {
+    "mocha": "^2.3.0",
+    "mockery": "^1.4.0",
+    "should": "^7.1.0",
+    "sinon": "^1.16.1"
+  },
+  "dependencies": {
+    "async": "^1.4.2",
+    "cheerio": "^0.19.0",
+    "fs-extra": "^0.24.0",
+    "request": "^2.61.0"
+  }
+}
