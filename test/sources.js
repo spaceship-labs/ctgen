@@ -12,7 +12,8 @@ describe('sources', function(){
       infoContratos = {
         url: 'https://sites.google.com/site/cnetuc/contrataciones',
         parent: '.sites-layout-tile table ',
-        each: 'tr td a'
+        each: 'tr td a',
+        name: 'contracts'
       },
       streamPipe = {
         pipe: function(dest){//simulate streams
@@ -61,14 +62,46 @@ describe('sources', function(){
   describe('getDownloadLink', function(){
     it('should return links to zip or xls files by selectors', function(done){
       sources.getDownloadLink(infoContratos, function(err, data){
-        data.should.containEql('http://upcp.funcionpublica.gob.mx/descargas/Contratos2015.zip')
-        done()
+        var exp = [{
+                  name: 'contracts',
+                  links: [ 'http://upcp.funcionpublica.gob.mx/descargas/Contratos2015.zip',
+                    'http://upcp.funcionpublica.gob.mx/descargas/Contratos2014.zip',
+                    'http://upcp.funcionpublica.gob.mx/descargas/Contratos2013.zip',
+                    'http://upcp.funcionpublica.gob.mx/descargas/Contratos2010_2012.zip' ]
+                  }];
+        data.should.be.eql(exp);
+        done();
+      });
+    });
+
+    it('should exclude urls', function(done){
+      var contratos = {
+        url: 'https://sites.google.com/site/cnetuc/contrataciones',
+        parent: '.sites-layout-tile table ',
+        each: 'tr td a',
+        name: 'contracts',
+        exclude: /2015/
+      },
+      exp = [{
+        name: 'contracts',
+        links: [ 'http://upcp.funcionpublica.gob.mx/descargas/Contratos2014.zip',
+          'http://upcp.funcionpublica.gob.mx/descargas/Contratos2013.zip',
+          'http://upcp.funcionpublica.gob.mx/descargas/Contratos2010_2012.zip' ]
+        }];
+
+      sources.getDownloadLink(contratos, function(err, data){
+        data.should.be.eql(exp);
+        done();
       });
     });
 
     it('should return direct link [sugar]', function(done){
-      sources.getDownloadLink({link: 'http://upcp.funcionpublica.gob.mx/descargas/UC.zip'}, function(err, data){
-        data.should.containEql('http://upcp.funcionpublica.gob.mx/descargas/UC.zip')
+      sources.getDownloadLink({name: 'contract', link: 'http://upcp.funcionpublica.gob.mx/descargas/UC.zip'}, function(err, data){
+        var exp = [{
+          name: 'contract',
+          links: ['http://upcp.funcionpublica.gob.mx/descargas/UC.zip']
+        }];
+        data.should.be.eql(exp)
         done()
       });
     });
