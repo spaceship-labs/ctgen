@@ -1,0 +1,1 @@
+db.contrato.update({source: {$exists: false}},{ $set: { source: 'http://localhost' } }, {multi: true });
