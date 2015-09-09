@@ -9,12 +9,8 @@ var fs = require('fs-extra'),
 describe('sources', function(){
   var sources,
       stubs = {},
-      infoContratos = {
-        url: 'https://sites.google.com/site/cnetuc/contrataciones',
-        parent: '.sites-layout-tile table ',
-        each: 'tr td a',
-        name: 'contracts'
-      },
+      infoContratos,
+      contratosUrl = 'https://sites.google.com/site/cnetuc/contrataciones',
       streamPipe = {
         pipe: function(dest){//simulate streams
           dest.run('finish')
@@ -33,6 +29,16 @@ describe('sources', function(){
         }
       };
 
+  beforeEach(function(){
+    infoContratos = {
+        url: contratosUrl,
+        parent: '.sites-layout-tile table ',
+        each: 'tr td a',
+        name: 'contracts'
+    };
+
+  });
+
   before(function(){
     mockery.enable({
       warnOnReplace: false,
@@ -46,7 +52,7 @@ describe('sources', function(){
     stubs.fs.createReadStream = sinon.stub(fs, 'createReadStream', streamResponse);
 
     stubs.request = sinon.stub(request, 'get');
-    stubs.request.withArgs({url: infoContratos.url}).yieldsAsync(null, {}, htmlContratos);
+    stubs.request.withArgs({url: contratosUrl}).yieldsAsync(null, {}, htmlContratos);
     stubs.request.withArgs('http://upcp.funcionpublica.gob.mx/descargas/Contratos2010_2012.zip').returns(streamPipe);
 
     stubs.unzip = sinon.stub(unzip, 'Extract');
@@ -63,12 +69,33 @@ describe('sources', function(){
     it('should return links to zip or xls files by selectors', function(done){
       sources.getDownloadLink(infoContratos, function(err, data){
         var exp = [{
-                  name: 'contracts',
-                  links: [ 'http://upcp.funcionpublica.gob.mx/descargas/Contratos2015.zip',
-                    'http://upcp.funcionpublica.gob.mx/descargas/Contratos2014.zip',
-                    'http://upcp.funcionpublica.gob.mx/descargas/Contratos2013.zip',
-                    'http://upcp.funcionpublica.gob.mx/descargas/Contratos2010_2012.zip' ]
+                    url: contratosUrl,
+                    parent: '.sites-layout-tile table ',
+                    each: 'tr td a',
+                    name: 'contracts',
+                    links: [ 'http://upcp.funcionpublica.gob.mx/descargas/Contratos2015.zip',
+                      'http://upcp.funcionpublica.gob.mx/descargas/Contratos2014.zip',
+                      'http://upcp.funcionpublica.gob.mx/descargas/Contratos2013.zip',
+                      'http://upcp.funcionpublica.gob.mx/descargas/Contratos2010_2012.zip' ]
+                    }];
+
+        data.should.be.eql(exp);
+        done();
+      });
+    });
+
+    it('should return links to zip or xls files by selectors only once', function(done){
+      infoContratos.once = true;
+      sources.getDownloadLink(infoContratos, function(err, data){
+        var exp = [{
+                    url: contratosUrl,
+                    once: true,
+                    parent: '.sites-layout-tile table ',
+                    each: 'tr td a',
+                    name: 'contracts',
+                    links: [ 'http://upcp.funcionpublica.gob.mx/descargas/Contratos2015.zip',]
                   }];
+
         data.should.be.eql(exp);
         done();
       });
@@ -83,7 +110,11 @@ describe('sources', function(){
         exclude: /2015/
       },
       exp = [{
+        url: 'https://sites.google.com/site/cnetuc/contrataciones',
+        parent: '.sites-layout-tile table ',
+        each: 'tr td a',
         name: 'contracts',
+        exclude: /2015/,
         links: [ 'http://upcp.funcionpublica.gob.mx/descargas/Contratos2014.zip',
           'http://upcp.funcionpublica.gob.mx/descargas/Contratos2013.zip',
           'http://upcp.funcionpublica.gob.mx/descargas/Contratos2010_2012.zip' ]
@@ -99,7 +130,8 @@ describe('sources', function(){
       sources.getDownloadLink({name: 'contract', link: 'http://upcp.funcionpublica.gob.mx/descargas/UC.zip'}, function(err, data){
         var exp = [{
           name: 'contract',
-          links: ['http://upcp.funcionpublica.gob.mx/descargas/UC.zip']
+          links: ['http://upcp.funcionpublica.gob.mx/descargas/UC.zip'],
+          link: 'http://upcp.funcionpublica.gob.mx/descargas/UC.zip'
         }];
         data.should.be.eql(exp)
         done()

@@ -21,7 +21,8 @@ describe('format', function(){
     expectCsv = '"nameField1","nameField2","nameField3"\n' +
               '"field1","field2","field3"\n'+
               ',"field2.1","field3.1"\n' +
-              ',,"field3.2"\n';
+              ',,"field3.2 with comm\'"\n'+
+              ',,"field4.2 a"\n';
 
     //testfile.xls
     var testfile = {
@@ -43,7 +44,10 @@ describe('format', function(){
           {address: 'c3',value: 'field3.1'}],
           [{address: 'a4',},
           {address: 'b4',},
-          {address: 'c4',value: 'field3.2'}]
+          {address: 'c4',value: 'field3.2 with comm"'}],
+          [{address: 'a4',},
+          {address: 'b4',},
+          {address: 'c4',value: 'field4.2 \na'}]
         ]
       }]
     };
@@ -83,6 +87,8 @@ describe('format', function(){
     it('should format csv', function(done){
       format.xls2csv('testfile.xls', function(err, csv){
         stubs.fs.createOutputStream.called.should.be.equal(false);
+        console.log('res', csv)
+        console.log('ex', expectCsv);
         csv.should.be.equal(expectCsv);
         done();
       });
@@ -92,8 +98,9 @@ describe('format', function(){
       var expectCsvHead = '"namefieldhead1","namefieldhead2","namefieldhead3"\n' +
               '"field1","field2","field3"\n'+
               ',"field2.1","field3.1"\n' +
-              ',,"field3.2"\n';
-      format.xls2csv('testfile.xls', {headCsv: ['"namefieldhead1","namefieldhead2","namefieldhead3"']}, function(err, csv){
+              ',,"field3.2 with comm\'"\n' +
+              ',,"field4.2 a"\n';
+      format.xls2csv('testfile.xls', {headCsv: '"namefieldhead1","namefieldhead2","namefieldhead3"'}, function(err, csv){
         stubs.fs.createOutputStream.called.should.be.equal(false);
         csv.should.be.equal(expectCsvHead);
         done();
@@ -102,16 +109,13 @@ describe('format', function(){
 
     it('should format csv, if nameFile is nefined save with streams', function(done){
       format.xls2csv('testfile.xls', {fileName: 'csv/output.csv'}, function(err, csv){
-        console.log('called', stubs.fs.createOutputStream.called)
         stubs.fs.createOutputStream.called.should.be.equal(true);
-        console.log('call', stubs.fs.createOutputStreamWrite.getCall(1).args[0]);
         var lines = expectCsv.split('\n');
         stubs.fs.createOutputStreamWrite.getCall(0).args[0].should.be.equal(lines[0]+'\n');
         stubs.fs.createOutputStreamWrite.getCall(1).args[0].should.be.equal(lines[1]+'\n');
         stubs.fs.createOutputStreamWrite.getCall(2).args[0].should.be.equal(lines[2]+'\n');
         stubs.fs.createOutputStreamWrite.getCall(3).args[0].should.be.equal(lines[3]+'\n');
         stubs.fs.createOutputStreamEnd.calledOnce.should.be.equal(true);
-        //stubs.fs.createOutputStreamWrite.calledOnce.should.be.equal(4);
         csv.should.be.equal(expectCsv);
         done();
       });
