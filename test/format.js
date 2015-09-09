@@ -87,8 +87,6 @@ describe('format', function(){
     it('should format csv', function(done){
       format.xls2csv('testfile.xls', function(err, csv){
         stubs.fs.createOutputStream.called.should.be.equal(false);
-        console.log('res', csv)
-        console.log('ex', expectCsv);
         csv.should.be.equal(expectCsv);
         done();
       });
