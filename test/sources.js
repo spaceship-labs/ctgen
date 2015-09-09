@@ -155,5 +155,6 @@ describe('sources', function(){
   after(function(){
     mockery.deregisterAll();
     mockery.disable();
+    stubs.fs.createOutputStream.restore();
   });
 });
