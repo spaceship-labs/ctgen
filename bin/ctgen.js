@@ -25,7 +25,7 @@ program.command('install')
       console.log("use db", options.db);
 
     if(options.user && options.password){
-      ctgen.authString = '-u ' + options.user + ' -p ' + options.password + '--authenticationDatabase ' + options.db;
+      ctgen.authString = '-u ' + options.user + ' -p "' + options.password + '" --authenticationDatabase ' + options.db;
     }else{
       ctgen.authString = '';
     }
@@ -49,9 +49,12 @@ program.
   .option('-d, --db [database]', 'database name')
   .action(function(options){
     program.runOnce = true;
+    ctgen.verbose = true;
     console.log(options.user, options.password);
     if(options.user && options.password){
-      ctgen.authString = '-u ' + options.user + ' -p ' + options.password + '--authenticationDatabase ' + options.db;
+      ctgen.authString = '-u ' + options.user + ' -p "' + options.password + '" --authenticationDatabase ' + options.db;
+    }else{
+      ctgen.authString = '';
     }
     ctgen.runDebug(options.db);
   });
