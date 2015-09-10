@@ -21,10 +21,13 @@ program.command('install')
 
     ctgen.verbose = options.verbose;
 
-    if(ctgen.verbose)
+    if(ctgen.verbose){
       console.log("use db", options.db);
+    }
 
     if(options.user && options.password){
+      console.log("user: ", options.user)
+      console.log("password: ", options.password)
       ctgen.authString = '-u ' + options.user + ' -p "' + options.password + '" --authenticationDatabase ' + options.db;
     }else{
       ctgen.authString = '';

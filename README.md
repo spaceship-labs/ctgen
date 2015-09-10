@@ -14,6 +14,11 @@ $ ctgen install -d namedb
 ```
 $ ctgen --help
 ```
+## Use auth
+
+```
+$ ctgen install -d ctbook --verbose -u ctbook -p "password"
+```
 
 
 ## Test
