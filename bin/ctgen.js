@@ -35,8 +35,10 @@ program.command('install')
 
     ctgen.getCsv(function(err, files){
       if(err) return console.log(err);
-      if(ctgen.verbose)
+      if(ctgen.verbose){
+        console.log('success csvs', files);
         console.log('mongo scripts');
+      }
       ctgen.runScriptsMongo(files, options.db, function(err){
         if(err) return console.log(err);
         console.log('success');
