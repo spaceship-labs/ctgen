@@ -11,9 +11,10 @@ program.command('install')
   .alias('i')
   .description('download and generate database')
   .option('-d, --db [database]', 'database name')
-  .option('--v, --verbose', 'verbose')
+  .option('-v, --verbose', 'verbose')
   .option('-u, --user [user]', 'user')
   .option('-p, --password [pwd]', 'password')
+  .option('--authdb [authdb]', 'authdb')
   .action(function(options){
     program.runOnce = true;
     if(!options.db)
@@ -26,14 +27,21 @@ program.command('install')
     }
 
     if(options.user && options.password){
-      console.log("user: ", options.user)
-      console.log("password: ", options.password)
+      console.log("user: ", options.user);
+      console.log("password: ", options.password);
+      if(options.authdb){
+        console.log("authdb: "+options.authdb);
+        var authdb = options.authdb;
+      }else{
+        console.log("authdb: "+options.db);
+        var authdb = options.db;
+      }
       ctgen.authString = '-u ' + options.user + ' -p "' + options.password + '" --authenticationDatabase ' + options.db;
     }else{
       ctgen.authString = '';
     }
 
-    ctgen.getCsv(function(err, files){
+    /*ctgen.getCsv(function(err, files){
       if(err) return console.log(err);
       if(ctgen.verbose){
         console.log('success csvs', files);
@@ -43,7 +51,7 @@ program.command('install')
         if(err) return console.log(err);
         console.log('success');
       });
-    });
+    });*/
   });
 
 program.
