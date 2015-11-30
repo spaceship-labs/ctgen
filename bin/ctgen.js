@@ -15,16 +15,20 @@ program.command('install')
   .option('-u, --user [user]', 'user')
   .option('-p, --password [pwd]', 'password')
   .option('--authdb [authdb]', 'authdb')
+  .option('--no-download','noDownload')
+  .option('--no-mongo','noMongo')
   .action(function(options){
     program.runOnce = true;
-    if(!options.db)
+    if(!options.db){
       options.help && options.help() || program.help();
-
+    };
+    ctgen.noDownload = options.noDownload;
+    ctgen.noMongo = options.noMongo;
     ctgen.verbose = options.verbose;
 
     if(ctgen.verbose){
       console.log("use db", options.db);
-    }
+    };
 
     if(options.user && options.password){
       console.log("user: ", options.user);
@@ -41,17 +45,8 @@ program.command('install')
       ctgen.authString = '';
     }
 
-    /*ctgen.getCsv(function(err, files){
-      if(err) return console.log(err);
-      if(ctgen.verbose){
-        console.log('success csvs', files);
-        console.log('mongo scripts');
-      }
-      ctgen.runScriptsMongo(files, options.db, function(err){
-        if(err) return console.log(err);
-        console.log('success');
-      });
-    });*/
+    ctgen.install();
+
   });
 
 program.
