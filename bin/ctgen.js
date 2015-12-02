@@ -15,14 +15,14 @@ program.command('install')
   .option('-u, --user [user]', 'user')
   .option('-p, --password [pwd]', 'password')
   .option('--authdb [authdb]', 'authdb')
-  .option('--no-download','noDownload')
-  .option('--no-mongo','noMongo')
+  //.option('--no-download','noDownload')//no descargar solo procesar.
+  .option('--csv [path]','csv files to process')
+  .option('--no-mongo','noMongo')// solo descargar
   .action(function(options){
     program.runOnce = true;
     if(!options.db){
       options.help && options.help() || program.help();
     };
-    ctgen.noDownload = options.noDownload;
     ctgen.noMongo = options.noMongo;
     ctgen.verbose = options.verbose;
 
@@ -30,22 +30,12 @@ program.command('install')
       console.log("use db", options.db);
     };
 
+    options.authString = '';
     if(options.user && options.password){
-      console.log("user: ", options.user);
-      console.log("password: ", options.password);
-      if(options.authdb){
-        console.log("authdb: "+options.authdb);
-        var authdb = options.authdb;
-      }else{
-        console.log("authdb: "+options.db);
-        var authdb = options.db;
-      }
-      ctgen.authString = '-u ' + options.user + ' -p "' + options.password + '" --authenticationDatabase ' + options.db;
-    }else{
-      ctgen.authString = '';
+      options.authString = formatAuthString(options);
     }
 
-    ctgen.install();
+    ctgen.install(options);
 
   });
 
@@ -55,16 +45,16 @@ program.
   .option('-u, --user [user]', 'user')
   .option('-p, --password [pwd]', 'password')
   .option('-d, --db [database]', 'database name')
+  .option('--authdb [authdb]', 'authdb')
   .action(function(options){
     program.runOnce = true;
     ctgen.verbose = true;
-    console.log(options.user, options.password);
+
+    options.authString = '';
     if(options.user && options.password){
-      ctgen.authString = '-u ' + options.user + ' -p "' + options.password + '" --authenticationDatabase ' + options.db;
-    }else{
-      ctgen.authString = '';
+      options.authString = formatAuthString(options);
     }
-    ctgen.runDebug(options.db);
+    ctgen.runDebug(options);
   });
 
 program
@@ -73,4 +63,8 @@ program
 
 if(!program.runOnce){
   program.help();
+}
+
+function formatAuthString(options) {
+  return '-u ' + options.user + ' -p "' + options.password + '" --authenticationDatabase ' + (options.authdb || options.db);
 }
