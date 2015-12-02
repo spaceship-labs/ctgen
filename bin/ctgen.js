@@ -15,15 +15,16 @@ program.command('install')
   .option('-u, --user [user]', 'user')
   .option('-p, --password [pwd]', 'password')
   .option('--authdb [authdb]', 'authdb')
-  //.option('--no-download','noDownload')//no descargar solo procesar.
+  //.option('--no-download','noDownload')
   .option('--csv [path]','csv files to process')
-  .option('--no-mongo','noMongo')// solo descargar
+  .option('--no-mongo','noMongo')
   .action(function(options){
     program.runOnce = true;
-    if(!options.db){
+    options.noMongo = !options.mongo;
+    if(!options.db && !options.noMongo){
       options.help && options.help() || program.help();
+      return;
     };
-    ctgen.noMongo = options.noMongo;
     ctgen.verbose = options.verbose;
 
     if(ctgen.verbose){
