@@ -18,6 +18,7 @@ program.command('install')
   .option('--xlsx [path]','xls files to process')
   .option('--csv [path]','csv files to process')
   .option('--no-mongo','noMongo')
+  .option('--only-process','only run scripts for process data in db')
   .action(function(options){
     program.runOnce = true;
     options.noMongo = !options.mongo;

@@ -184,6 +184,20 @@ describe('sources', function(){
     });
   });
 
+  describe('merge', function(){
+    it('should merge sources data with obj argument', function(){
+      var data = sources.merge([
+        {
+          name: 'uc',
+          docs: ['paths']
+        }
+      ]);
+      data[0].name.should.equal('uc');
+      data[0].link.should.equal('http://upcp.funcionpublica.gob.mx/descargas/UC.zip');
+      data[0].docs.should.eql(['paths'])
+    });
+  });
+
   after(function(){
     mockery.deregisterAll();
     mockery.disable();
