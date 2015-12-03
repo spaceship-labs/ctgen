@@ -79,6 +79,18 @@ describe('file', function(){
         done();
       });
     });
+
+    it('should return object with format but only the dirname', function(done){
+      var pwd = process.cwd();
+      //file.getAllAndFormatPath('xlsx', 'ctbook_files_xls/', 'docs', function(err, obj){
+      file.getAllAndFormatPath('js', 'scripts/', 'jss', function(err, obj){
+        obj[0].name.should.equal('mongo')
+        obj[0].jss.should.containDeep([
+           pwd + '/scripts/mongo'
+        ]);
+        done();
+      });
+    });
   });
 
 });

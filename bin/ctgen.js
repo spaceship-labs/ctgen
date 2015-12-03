@@ -15,7 +15,7 @@ program.command('install')
   .option('-u, --user [user]', 'user')
   .option('-p, --password [pwd]', 'password')
   .option('--authdb [authdb]', 'authdb')
-  //.option('--no-download','noDownload')
+  .option('--xlsx [path]','xls files to process')
   .option('--csv [path]','csv files to process')
   .option('--no-mongo','noMongo')
   .action(function(options){
@@ -27,7 +27,7 @@ program.command('install')
     };
     ctgen.verbose = options.verbose;
 
-    if(ctgen.verbose){
+    if(ctgen.verbose && !options.noMongo){
       console.log("use db", options.db);
     };
 
