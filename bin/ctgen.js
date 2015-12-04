@@ -28,7 +28,7 @@ program.command('install')
     };
     ctgen.verbose = options.verbose;
 
-    if(ctgen.verbose && !options.noMongo){
+    if(!options.noMongo){
       console.log("use db", options.db);
     };
 

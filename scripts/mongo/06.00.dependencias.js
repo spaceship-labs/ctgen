@@ -4,17 +4,18 @@ hashmap = {};
 uchashmap = {};
 var bulk = db.dependencia.initializeUnorderedBulkOp();
 var bulk_uc = db.unidadcompradora.initializeUnorderedBulkOp();
-db.uc.find({}).forEach(function (doc) {
+print("no timeout option");
+db.uc.find({}).addOption(DBQuery.Option.noTimeout).forEach(function (doc) {
   if(hashmap[doc.DEPENDENCIA_ENTIDAD] === undefined) {
     hashmap[doc.DEPENDENCIA_ENTIDAD] = counter;
     id = new ObjectId();
     date = new Date().toISOString();
     obj = {siglas: doc.SIGLAS, _id: id, dependencia: doc.DEPENDENCIA_ENTIDAD, createdAt: date, updatedAt: date};
     bulk.insert( obj );
-   
+
     if(uchashmap[doc.CLAVE_UC] === undefined) {
       uchashmap[doc.CLAVE_UC] = counter;
-    
+
       ucid = new ObjectId();
       obj = {claveuc: doc.CLAVE_UC, _id: ucid, nombre_de_la_uc: doc.NOMBRE_UC, dependencia: id, createdAt: date, updatedAt: date};
       bulk_uc.insert( obj );
@@ -38,12 +39,12 @@ db.uc.find({}).forEach(function (doc) {
         }
         bulk.find( { _id: id } ).update( { $set: { unidades: unidades } } );
       });
-    } 
+    }
   } else {
     db.dependencia.find({dependencia: doc.DEPENDENCIA_ENTIDAD }).forEach(function (dep) {
       if(uchashmap[doc.CLAVE_UC] === undefined) {
         uchashmap[doc.CLAVE_UC] = counter;
-      
+
         ucid = new ObjectId();
         obj = {claveuc: doc.CLAVE_UC, _id: ucid, nombre_de_la_uc: doc.NOMBRE_UC, dependencia: dep._id, createdAt: date, updatedAt: date};
         bulk_uc.insert( obj );

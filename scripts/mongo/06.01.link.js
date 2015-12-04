@@ -5,7 +5,8 @@ print("link dependencias y unidades compradoras");
 print("update dependencia y unidad compradora via unidad compradora");
 counter=0;
 var bulk = db.contrato.initializeUnorderedBulkOp();
-db.unidadcompradora.find().forEach(function (doc) {
+print("no timeout option");
+db.unidadcompradora.find().addOption(DBQuery.Option.noTimeout).forEach(function (doc) {
     bulk.find( { $and: [{ claveuc: doc.claveuc },{ dependencia2: null }] } ).update( { $set: { dependencia2: doc.dependencia, unidadCompradora : doc._id  } } );
 
     counter++;
