@@ -34,9 +34,10 @@ db.empresa.find({}).limit(1).forEach(function (company) {
         //"inStr".replace(/([àáâãäå])|([ç])|([èéêë])|([ìíîï])|([ñ])|([òóôõöø])|([ß])|([ùúûü])|([ÿ])|([æ])/g, function(str,a,c,e,i,n,o,s,u,y,ae) { if(a) return 'a'; else if(c) return 'c'; else if(e) return 'e'; else if(i) return 'i'; else if(n) return 'n'; else if(o) return 'o'; else if(s) return 's'; else if(u) return 'u'; else if(y) return 'y'; else if(ae) return 'ae'; });
         //bulk.find( { provedorContratista: company2._id } ).update( { $set: { provedorContratista: company._id } } );
         //bulk.find( { _id: company2._id } ).remove();
-        print(company.proveedor_contratista);
-        print(company2.proveedor_contratista);
-        print("-------------");
+
+        //print(company.proveedor_contratista);
+        //print(company2.proveedor_contratista);
+        //print("-------------");
       }
     }
   });

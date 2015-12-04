@@ -81,18 +81,3 @@ print("insertando " + Object.keys(hashmap).length + " dependencias");
 print("insertando " + Object.keys(uchashmap).length + " unidades");
 bulk.execute({ w: 0});
 bulk_uc.execute({ w: 0});
-
-// link dependencias - 295 x 1min
-counter=0;
-
-bulk = db.contrato.initializeUnorderedBulkOp();
-db.dependencia.find({}).forEach(function (doc) {
-  bulk.find( { dependencia: doc.dependencia } ).update( { $set: { dependencia2: doc._id } } );
-  counter++;
-  if(counter % 100 === 0 ) {
-    print("ciclo " + counter);
-    bulk.execute({ w: 0});
-    bulk = db.contrato.initializeUnorderedBulkOp();
-  }
-});
-bulk.execute({ w: 0});
