@@ -19,6 +19,8 @@ program.command('install')
   .option('--csv [path]','csv files to process')
   .option('--no-mongo','noMongo')
   .option('--only-process','only run scripts for process data in db')
+  .option('--run','run in this process')
+  .option('--spawn', 'run in separate processes')
   .action(function(options){
     program.runOnce = true;
     options.noMongo = !options.mongo;
@@ -61,7 +63,7 @@ program.
   });
 
 program
-  .parse(process.argv)
+  .parse(process.argv);
 
 
 if(!program.runOnce){
