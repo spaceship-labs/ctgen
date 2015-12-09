@@ -48,6 +48,7 @@ program.
   .option('-p, --password [pwd]', 'password')
   .option('-d, --db [database]', 'database name')
   .option('--authdb [authdb]', 'authdb')
+  .option('--run', 'run command')
   .action(function(options){
     program.runOnce = true;
     ctgen.verbose = true;
