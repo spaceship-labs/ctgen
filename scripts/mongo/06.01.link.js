@@ -22,7 +22,7 @@ print("update dependencia via nombre");
 counter=0;
 //update dependencia via nombre
 bulk = db.contrato.initializeUnorderedBulkOp();
-db.dependencia.find().forEach(function (doc) {
+db.dependencia.find().addOption(DBQuery.Option.noTimeout).forEach(function (doc) {
   bulk.find(  { $and: [ { dependencia2: null }, { dependencia: { $regex : new RegExp(["^", doc.dependencia, "$"].join(""), "i") } }  ] }).update( { $set: { dependencia2: doc._id } } );
 
   counter++;
