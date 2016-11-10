@@ -53,7 +53,7 @@ describe('sources', function(){
 
     stubs.request = sinon.stub(request, 'get');
     stubs.request.withArgs({url: contratosUrl}).yieldsAsync(null, {}, htmlContratos);
-    stubs.request.withArgs('http://upcp.funcionpublica.gob.mx/descargas/Contratos2010_2012.zip').returns(streamPipe);
+    stubs.request.withArgs({url: 'http://upcp.funcionpublica.gob.mx/descargas/Contratos2010_2012.zip', rejectUnauthorized: false}).returns(streamPipe);
 
     stubs.unzip = sinon.stub(unzip, 'Extract');
     stubs.unzip.withArgs({path: 'unzip/'+'downloadtestupcpfuncionpublicagobmxdescargasContratos2010_2012'}).returns(streamResponse());
