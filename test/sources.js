@@ -101,6 +101,26 @@ describe('sources', function(){
       });
     });
 
+    it('should return links to zip or xls files by selectors only by first parent', function(done){
+      infoContratos.onlyFirstParent = true;
+      sources.getDownloadLink(infoContratos, function(err, data){
+        var exp = [{
+                    url: contratosUrl,
+                    onlyFirstParent: true,
+                    parent: '.sites-layout-tile table ',
+                    each: 'tr td a',
+                    name: 'contracts',
+                    links: [ 'http://upcp.funcionpublica.gob.mx/descargas/Contratos2015.zip',
+                      'http://upcp.funcionpublica.gob.mx/descargas/Contratos2014.zip',
+                      'http://upcp.funcionpublica.gob.mx/descargas/Contratos2013.zip',
+                      'http://upcp.funcionpublica.gob.mx/descargas/Contratos2010_2012.zip' ]
+                  }];
+
+        data.should.be.eql(exp);
+        done();
+      });
+    });
+
     it('should exclude urls', function(done){
       var contratos = {
         url: 'https://sites.google.com/site/cnetuc/contrataciones',
