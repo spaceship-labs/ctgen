@@ -5,7 +5,7 @@ var should = require('should'),
     sources = require('../lib/sources'),
     shell = require('../lib/runScript'),
     child_process = require('child_process');
-
+var moment = require('moment');
 
 describe('main', function(){
 
@@ -260,5 +260,21 @@ describe('main', function(){
     });
   });
 
+  describe('update',function(){
+    it('should be valid date',function(done){
+      main.runUpdate({ date : '08-30-2017' },function(o){
+        should.exist(o.date);
+        should(moment(new Date(o.date)).isValid()).equal( true );
+        done();
+      });
+    });
+    it('should be invalid date',function(done){
+      main.runUpdate({ date : 'no date' },function(o){
+        should.exist(o.date);
+        should(moment(new Date(o.date)).isValid()).equal( false );
+        done();
+      });
+    });
+  });
 
 });

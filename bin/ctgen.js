@@ -62,6 +62,36 @@ program.
     ctgen.runDebug(options);
   });
 
+program.
+  command('update')
+  .description('update database by date as parameter')
+  .option('-v, --verbose', 'verbose')
+  .option('-d, --db [database]', 'database name')
+  .option('--only-process','only run scripts for process data in db')
+  .option('--csv [path]','csv files to process')
+  .action(function(options){
+    program.runOnce = true;
+    options.authString = '';
+    if(options.user && options.password){
+      options.authString = formatAuthString(options);
+    }
+    ctgen.runUpdate(options);
+  });
+
+program.
+  command('formatdb')
+  .description('Format the database ( slugs and codigoContratoProcedimiento )')
+  .option('-v, --verbose', 'verbose')
+  .option('-d, --db [database]', 'database name')
+  .action(function(options){
+    program.runOnce = true;
+    options.authString = '';
+    if(options.user && options.password){
+      options.authString = formatAuthString(options);
+    }
+    ctgen.updateDatabase(options);
+  });
+
 program
   .parse(process.argv);
 

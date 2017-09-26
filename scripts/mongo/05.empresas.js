@@ -16,7 +16,7 @@ var preCompiledDateRegex = /^(\d{2})\/(\d{2})\/(\d{4})$/;
 var bulk = db.empresa.initializeUnorderedBulkOp();
 var bulk_c = db.contrato.initializeUnorderedBulkOp();
 
-db.contrato.find({}).forEach(function (doc) {
+db.contrato.find({ }).forEach(function (doc) {
   //print(doc.proveedor_contratista);
   nombre_sin_acentos = doc.proveedor_contratista.replace(preCompiledAccentsRegex, function(str,a,c,e,i,n,o,s,u,y,ae) { if(a) return 'a'; else if(c) return 'c'; else if(e) return 'e'; else if(i) return 'i'; else if(n) return 'n'; else if(o) return 'o'; else if(s) return 's'; else if(u) return 'u'; else if(y) return 'y'; else if(ae) return 'ae'; });
   nombre = nombre_sin_acentos.toUpperCase();
@@ -42,10 +42,10 @@ db.contrato.find({}).forEach(function (doc) {
     bulk_c.find( { _id: doc._id } ).update( { $set: { fecha_inicio_year: date, origProvedorContratista: doc.proveedor_contratista, provedorContratista: id, importe_contrato: money } } );
 
     hashmap[nombre] = id;
-    hashmap_names[hashmap[nombre]] = doc.proveedor_contratista.toString();
+    //hashmap_names[hashmap[nombre]] = doc.proveedor_contratista.toString();
   } else {
     bulk_c.find( { _id: doc._id } ).update( { $set: { fecha_inicio_year: date, origProvedorContratista: doc.proveedor_contratista, provedorContratista: hashmap[nombre], importe_contrato: money } } );
-    if(hashmap_names[hashmap[nombre]] === undefined) {
+    /*if(hashmap_names[hashmap[nombre]] === undefined) {
       hashmap_names[hashmap[nombre]] = doc.proveedor_contratista.toString();
     } else {
       value = hashmap_names[hashmap[nombre]];
@@ -53,7 +53,7 @@ db.contrato.find({}).forEach(function (doc) {
         value += "|" + doc.proveedor_contratista.toString();
         hashmap_names[hashmap[nombre]] = value;
       }
-    }
+    }*/
   }
 
   if(doc.moneda === undefined || doc.moneda.toUpperCase() == "MXN") {
@@ -88,7 +88,8 @@ counter=0;
 print("actualizando importes");
 bulk = db.empresa.initializeUnorderedBulkOp();
 db.empresa.find({}).forEach(function (doc) {
-  bulk.find( { _id: doc._id } ).update( { $set: { nombres: hashmap_names[doc._id], importe_contrato: importe_hashmap[doc.proveedor_contratista], importe_contrato_usd: importe_hashmap_usd[doc.proveedor_contratista] } } );
+  //nombres: hashmap_names[doc._id], 
+  bulk.find( { _id: doc._id } ).update( { $set: { importe_contrato: importe_hashmap[doc.proveedor_contratista], importe_contrato_usd: importe_hashmap_usd[doc.proveedor_contratista] } } );
   counter++;
   if(counter % 50000 === 0 ) {
     print("ciclo " + counter);
