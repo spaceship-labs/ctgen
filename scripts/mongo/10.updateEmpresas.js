@@ -55,26 +55,26 @@ db.contrato.find({ provedorContratista : null }).addOption(DBQuery.Option.noTime
       bulk_c.execute({ w: 0});
       bulk_c = db.contrato.initializeUnorderedBulkOp();
     }
-  });
-  print("insertando registros");
-  bulk.execute({ w: 0});
-  bulk_c.execute({ w: 0});
+  }
+});
+print("insertando registros");
+bulk.execute({ w: 0});
+bulk_c.execute({ w: 0});
 
 
-  counter=0;
-  print("actualizando contratos -> relación empresas");
-  bulk_c = db.contrato.initializeUnorderedBulkOp();
-  db.empresa.find({ }).addOption(DBQuery.Option.noTimeout).forEach(function (doc) {
-    //print(doc.slug); // , provedorContratista : null
-    bulk_c.find({ slugProvedorContratista : { $eq : doc.slug }, provedorContratista:null  }).update({ $set : {provedorContratista : doc._id} });//provedorContratista
-    counter++;
-    if(counter % 1500 === 0 ) {
-      print("ciclo " + counter);
-    }
-    if(counter % 100 === 0 ) {
-      bulk_c.execute({ w: 0});
-      bulk_c = db.contrato.initializeUnorderedBulkOp();
-    }
+counter=0;
+print("actualizando contratos -> relación empresas");
+bulk_c = db.contrato.initializeUnorderedBulkOp();
+db.empresa.find({ }).addOption(DBQuery.Option.noTimeout).forEach(function (doc) {
+  //print(doc.slug); // , provedorContratista : null
+  bulk_c.find({ slugProvedorContratista : { $eq : doc.slug }, provedorContratista:null  }).update({ $set : {provedorContratista : doc._id} });//provedorContratista
+  counter++;
+  if(counter % 1500 === 0 ) {
+    print("ciclo " + counter);
+  }
+  if(counter % 100 === 0 ) {
+    bulk_c.execute({ w: 0});
+    bulk_c = db.contrato.initializeUnorderedBulkOp();
   }
 });
 print('EXEC ' + counter);

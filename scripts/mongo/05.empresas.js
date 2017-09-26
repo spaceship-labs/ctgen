@@ -80,25 +80,25 @@ db.contrato.find({ }).forEach(function (doc) {
       bulk_c.execute({ w: 0});
       bulk_c = db.contrato.initializeUnorderedBulkOp();
     }
-  });
-  print("insertando " + Object.keys(hashmap).length + " registros");
-  bulk.execute({ w: 0});
-  bulk_c.execute({ w: 0});
+  }
+});
+print("insertando " + Object.keys(hashmap).length + " registros");
+bulk.execute({ w: 0});
+bulk_c.execute({ w: 0});
 
-  counter=0;
-  print("actualizando importes");
-  bulk = db.empresa.initializeUnorderedBulkOp();
-  db.empresa.find({}).forEach(function (doc) {
-    //nombres: hashmap_names[doc._id], 
-    bulk.find( { _id: doc._id } ).update( { $set: { importe_contrato: importe_hashmap[doc.proveedor_contratista], importe_contrato_usd: importe_hashmap_usd[doc.proveedor_contratista] } } );
-    counter++;
-    if(counter % 50000 === 0 ) {
-      print("ciclo " + counter);
-    }
-    if(counter % 500 === 0 ) {
-      bulk.execute({ w: 0});
-      bulk = db.empresa.initializeUnorderedBulkOp();
-    }
+counter=0;
+print("actualizando importes");
+bulk = db.empresa.initializeUnorderedBulkOp();
+db.empresa.find({}).forEach(function (doc) {
+  //nombres: hashmap_names[doc._id], 
+  bulk.find( { _id: doc._id } ).update( { $set: { importe_contrato: importe_hashmap[doc.proveedor_contratista], importe_contrato_usd: importe_hashmap_usd[doc.proveedor_contratista] } } );
+  counter++;
+  if(counter % 50000 === 0 ) {
+    print("ciclo " + counter);
+  }
+  if(counter % 500 === 0 ) {
+    bulk.execute({ w: 0});
+    bulk = db.empresa.initializeUnorderedBulkOp();
   }
 });
 bulk.execute({ w: 0});
