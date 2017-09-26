@@ -39,12 +39,12 @@ db.contrato.find({ }).forEach(function (doc) {
     obj = {proveedor_contratista: nombre_sin_acentos, _id: id, createdAt: today_date, updatedAt: today_date};
     bulk.insert( obj );
 
-    bulk_c.find( { _id: doc._id } ).update( { $set: { fecha_inicio_year: date, origProvedorContratista: doc.proveedor_contratista, provedorContratista: id, importe_contrato: money } } );
+    bulk_c.find( { _id: doc._id } ).update( { $set: { fecha_inicio_year: date, origProvedorContratista: doc.proveedor_contratista, provedorContratista: id, importe_contrato: money, codigoContratoProcedimiento : doc.codigo_contrato + '-' + doc.numero_procedimiento, slugProvedorContratista : nombre } } );
 
     hashmap[nombre] = id;
     //hashmap_names[hashmap[nombre]] = doc.proveedor_contratista.toString();
   } else {
-    bulk_c.find( { _id: doc._id } ).update( { $set: { fecha_inicio_year: date, origProvedorContratista: doc.proveedor_contratista, provedorContratista: hashmap[nombre], importe_contrato: money } } );
+    bulk_c.find( { _id: doc._id } ).update( { $set: { fecha_inicio_year: date, origProvedorContratista: doc.proveedor_contratista, provedorContratista: hashmap[nombre], importe_contrato: money, codigoContratoProcedimiento : doc.codigo_contrato + '-' + doc.numero_procedimiento, slugProvedorContratista : nombre } } );
     /*if(hashmap_names[hashmap[nombre]] === undefined) {
       hashmap_names[hashmap[nombre]] = doc.proveedor_contratista.toString();
     } else {
