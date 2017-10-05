@@ -69,6 +69,9 @@ program.
   .option('-d, --db [database]', 'database name')
   .option('--only-process','only run scripts for process data in db')
   .option('--csv [path]','csv files to process')
+  .option('-u, --user [user]', 'user')
+  .option('-p, --password [pwd]', 'password')
+  .option('--authdb [authdb]', 'authdb')
   .action(function(options){
     program.runOnce = true;
     options.authString = '';
@@ -83,6 +86,9 @@ program.
   .description('Format the database ( slugs and codigoContratoProcedimiento )')
   .option('-v, --verbose', 'verbose')
   .option('-d, --db [database]', 'database name')
+  .option('-u, --user [user]', 'user')
+  .option('-p, --password [pwd]', 'password')
+  .option('--authdb [authdb]', 'authdb')
   .action(function(options){
     program.runOnce = true;
     options.authString = '';
