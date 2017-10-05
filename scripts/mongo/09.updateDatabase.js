@@ -38,7 +38,9 @@ db.contrato.find({ codigoContratoProcedimiento : null }).addOption(DBQuery.Optio
 	nombre = nombre.replace(preCompiledComaRegex, "");
 	nombre = nombre.replace(preCompiledDotRegex, "");
 	nombre = nombre.replace(preCompiledSpaceRegex, "");
-	bulk_c.find({ _id: doc._id }).update({ $set: { codigoContratoProcedimiento : doc.codigo_contrato + '-' + doc.numero_procedimiento, slugProvedorContratista : nombre } });
+	if( !nombre || nombre == '' ) nombre = doc._id;
+	var codigoContratoProcedimiento = (doc.codigo_contrato&&doc.numero_procedimiento)?doc.codigo_contrato + '-' + doc.numero_procedimiento:doc._id;
+	bulk_c.find({ _id: doc._id }).update({ $set: { codigoContratoProcedimiento : codigoContratoProcedimiento, slugProvedorContratista : nombre, origProvedorContratista: doc.proveedor_contratista } });
 
 	counter++;
 	if(counter % 50000 === 0 ) {
