@@ -30,6 +30,7 @@ db.empresa.find({ slug : null }).addOption(DBQuery.Option.noTimeout).forEach(fun
 bulk.execute({ w: 0});
 print("guardando empresa SLUG fin");
 
+counter=0;
 print("guardando contrato codigo");
 var bulk_c = db.contrato.initializeUnorderedBulkOp();
 db.contrato.find({ codigoContratoProcedimiento : null }).addOption(DBQuery.Option.noTimeout).forEach(function (doc){
@@ -54,6 +55,7 @@ db.contrato.find({ codigoContratoProcedimiento : null }).addOption(DBQuery.Optio
 bulk_c.execute({ w: 0});
 print("guardando contrato codigo fin");
 
+counter=0;
 print("Actualizando unidades compradoras/dependencias");
 var bulk = db.dependencia.initializeUnorderedBulkOp();
 var bulk_uc = db.unidadcompradora.initializeUnorderedBulkOp();
