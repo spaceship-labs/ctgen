@@ -80,3 +80,4 @@ db.empresa.find({ }).addOption(DBQuery.Option.noTimeout).forEach(function (doc) 
 print('EXEC ' + counter);
 bulk_c.execute({ w: 0});
 print("actualizando contratos -> relación empresas END");
+print(new Date());

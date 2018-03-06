@@ -65,3 +65,4 @@ print("insertando dependencias y unidades");
 bulk.execute({ w: 0});
 bulk_uc.execute({ w: 0});
 print("insertando dependencias y unidades END");
+print(new Date());

@@ -72,6 +72,7 @@ program.
   .option('-u, --user [user]', 'user')
   .option('-p, --password [pwd]', 'password')
   .option('--authdb [authdb]', 'authdb')
+  .option('-y, --year [year]','year')
   .action(function(options){
     program.runOnce = true;
     options.authString = '';
