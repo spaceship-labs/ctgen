@@ -41,6 +41,9 @@ db.uc.find({}).addOption(DBQuery.Option.noTimeout).forEach(function (doc) {
       });
     }
   } else {
+    if (!doc.DEPENDENCIA_ENTIDAD) {
+       return ;
+    }
     db.dependencia.find({dependencia: doc.DEPENDENCIA_ENTIDAD }).forEach(function (dep) {
       if(uchashmap[doc.CLAVE_UC] === undefined) {
         uchashmap[doc.CLAVE_UC] = counter;

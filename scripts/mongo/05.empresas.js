@@ -19,7 +19,7 @@ var bulk_c = db.contrato.initializeUnorderedBulkOp();
 db.contrato.find({ }).forEach(function (doc) {
   //print(doc.proveedor_contratista);
   if( doc.proveedor_contratista ){
-    nombre_sin_acentos = doc.proveedor_contratista.replace(preCompiledAccentsRegex, function(str,a,c,e,i,n,o,s,u,y,ae) { if(a) return 'a'; else if(c) return 'c'; else if(e) return 'e'; else if(i) return 'i'; else if(n) return 'n'; else if(o) return 'o'; else if(s) return 's'; else if(u) return 'u'; else if(y) return 'y'; else if(ae) return 'ae'; });
+    nombre_sin_acentos = doc.proveedor_contratista.toString().replace(preCompiledAccentsRegex, function(str,a,c,e,i,n,o,s,u,y,ae) { if(a) return 'a'; else if(c) return 'c'; else if(e) return 'e'; else if(i) return 'i'; else if(n) return 'n'; else if(o) return 'o'; else if(s) return 's'; else if(u) return 'u'; else if(y) return 'y'; else if(ae) return 'ae'; });
     nombre = nombre_sin_acentos.toUpperCase();
     nombre = nombre.replace(preCompiledComaRegex, "");
     nombre = nombre.replace(preCompiledDotRegex, "");
@@ -90,7 +90,7 @@ counter=0;
 print("actualizando importes");
 bulk = db.empresa.initializeUnorderedBulkOp();
 db.empresa.find({}).forEach(function (doc) {
-  //nombres: hashmap_names[doc._id], 
+  //nombres: hashmap_names[doc._id],
   bulk.find( { _id: doc._id } ).update( { $set: { importe_contrato: importe_hashmap[doc.proveedor_contratista], importe_contrato_usd: importe_hashmap_usd[doc.proveedor_contratista] } } );
   counter++;
   if(counter % 50000 === 0 ) {
