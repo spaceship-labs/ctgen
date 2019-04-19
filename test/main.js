@@ -260,7 +260,7 @@ describe('main', function(){
     });
   });
 
-  describe('update',function(){
+  describe.skip('update',function(){
     it('should be valid date',function(done){
       main.runUpdate({ date : '08-30-2017' },function(o){
         should.exist(o.date);

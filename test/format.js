@@ -93,7 +93,6 @@ describe('format', function(){
       var self = this;
       self.events = {};
       self.on = function(event, fn) {
-        console.log('event!', event);
         self.events[event] = fn;
         if (event == 'data') {
           if (file == 'testfile.xls') {
@@ -114,6 +113,10 @@ describe('format', function(){
     stubs.xlsObj.read = function() {};
     stubs.xls = sinon.stub(stubs.xlsObj, 'read');
     stubs.fs.createOutputStream = sinon.stub(fs, 'createOutputStream');
+    stubs.console = {
+      warn: sinon.spy(console, 'warn'),
+      log: sinon.spy(console, 'log')
+    };
     /*
     stubs.xlsObj.returns({
       end: function () {
@@ -150,6 +153,7 @@ describe('format', function(){
 
     mockery.registerMock('pyspreadsheet', {SpreadsheetReader: stubs.xlsObj});
     mockery.registerMock('fs-extra', fs);
+    mockery.registerMock('console', console);
 
     format = require('../lib/format');
   });
@@ -192,8 +196,117 @@ describe('format', function(){
 
       format.xls2csv_stream('testfileNewFields.xls', {headCsvLowerCase: true}, function(err, csv){
         stubs.fs.createOutputStream.called.should.be.equal(false);
-        console.log('return', csv);
         csv.should.be.equal(expectCsvHead);
+        done();
+      });
+    });
+
+    it('should log Warning if aliases columns dont exist in original file', function(done) {
+      //strict check of fields!!!
+      var expectCsvHead = '"name1","name2","nameField3"\n' +
+              '"field1","field2","field3"\n'+
+              ',"field2.1","field3.1"\n' +
+              ',,"field3.2 with comm\'"\n' +
+              ',,"field4.2 a"\n';
+      var aliasHeadCsv = {
+        'nameField1': 'name1',
+        'nameField2': 'name2',
+        'namefieldCODEIMPORTANT': 'name3',
+      };
+      var warnColumn = 'WARN!, Missing column namefieldCODEIMPORTANT -> name3 in testfile.xls';
+      var warnColumnInvalid = 'WARN!, Missing column nameField1 -> name1 in testfile.xls';
+      format.xls2csv_stream('testfile.xls', {aliasHeadCsv: aliasHeadCsv}, function(err, csv){
+        csv.should.be.equal(expectCsvHead);
+        stubs.console.warn.called.should.be.equal(true);
+        stubs.console.warn.calledWith(warnColumn).should.be.equal(true);
+        stubs.console.warn.calledWith(warnColumnInvalid).should.be.equal(false);
+        done();
+      });
+    });
+
+    it('should log Warning if aliases columns dont exist in original file, check for multialiases', function(done) {
+      //strict check of fields!!!
+      var expectCsvHead = '"name1","name2","name4"\n' +
+              '"field1","field2","field3"\n'+
+              ',"field2.1","field3.1"\n' +
+              ',,"field3.2 with comm\'"\n' +
+              ',,"field4.2 a"\n';
+      var aliasHeadCsv = {
+        'nameField1': 'name1',
+        'nameField2': 'name2',
+        'namefieldCODEIMPORTANT': 'name4',
+        'nameField3': 'name4'
+      };
+      var warnColumn = 'WARN!, Missing column namefieldCODEIMPORTANT -> name4 in testfile.xls';
+      format.xls2csv_stream('testfile.xls', {aliasHeadCsv: aliasHeadCsv}, function(err, csv){
+        csv.should.be.equal(expectCsvHead);
+        stubs.console.warn.calledWith(warnColumn).should.be.equal(false);
+        done();
+      });
+    });
+
+    it('should log Warning if required columns dont exist in original file', function(done) {
+      //shortcut for aliasHeadCsv = {'nameField1', }
+      var expectCsvHead = '"nameField1","nameField2","nameField3"\n' +
+              '"field1","field2","field3"\n'+
+              ',"field2.1","field3.1"\n' +
+              ',,"field3.2 with comm\'"\n' +
+              ',,"field4.2 a"\n';
+      var requiredColumns = [
+        'nameField1',
+        'nameField2',
+        'namefieldCODEREQUIRED'
+      ];
+      var warnColumn = 'WARN!, Missing column namefieldCODEREQUIRED in testfile.xls';
+      format.xls2csv_stream('testfile.xls', {requiredColumns: requiredColumns}, function(err, csv){
+        csv.should.be.equal(expectCsvHead);
+        stubs.console.warn.called.should.be.equal(true);
+        stubs.console.warn.calledWith(warnColumn).should.be.equal(true);
+        done();
+      });
+    });
+
+    it('should log Warning if required columns dont exist in original file, combine requiredColumns and aliasHeadCsv', function(done) {
+      var expectCsvHead = '"nameField1","nameField2","codeName"\n' +
+              '"field1","field2","field3"\n'+
+              ',"field2.1","field3.1"\n' +
+              ',,"field3.2 with comm\'"\n' +
+              ',,"field4.2 a"\n';
+      var requiredColumns = [
+        'nameField1',
+        'nameField2',
+        'nameFieldRequired5',
+        'codeName'
+      ];
+      var aliasHeadCsv = {
+        'nameField3': 'codeName'
+      };
+      var warnColumn = 'WARN!, Missing column nameFieldRequired5 in testfile.xls';
+      format.xls2csv_stream('testfile.xls', {requiredColumns: requiredColumns, aliasHeadCsv: aliasHeadCsv}, function(err, csv){
+        csv.should.be.equal(expectCsvHead);
+        stubs.console.warn.called.should.be.equal(true);
+        stubs.console.warn.calledWith(warnColumn).should.be.equal(true);
+        done();
+      });
+    });
+
+    it('should log Warning if required columns dont exist in original file, work with headCsvLowerCase', function(done) {
+      //shortcut for aliasHeadCsv = {'nameField1', }
+      var expectCsvHead = '"namefield1","namefield2","namefield3"\n' +
+              '"field1","field2","field3"\n'+
+              ',"field2.1","field3.1"\n' +
+              ',,"field3.2 with comm\'"\n' +
+              ',,"field4.2 a"\n';
+      var requiredColumns = [
+        'namefield1',
+        'namefield2',
+        'namefieldrequired'
+      ];
+      var warnColumn = 'WARN!, Missing column namefieldrequired in testfile.xls';
+      format.xls2csv_stream('testfile.xls', {requiredColumns: requiredColumns, headCsvLowerCase: true}, function(err, csv){
+        csv.should.be.equal(expectCsvHead);
+        stubs.console.warn.called.should.be.equal(true);
+        stubs.console.warn.calledWith(warnColumn).should.be.equal(true);
         done();
       });
     });
@@ -242,7 +355,7 @@ describe('format', function(){
   describe.skip('xlsx2csv_r', function(){
     it('should parse file o directory to csv and get obj', function(done){
       format.xlsx2csv_r(['testfile.xls', 'lib/'], function(err, data){
-        console.log(data);
+        //console.log(data);
       });
     });
   });
